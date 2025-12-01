@@ -4,6 +4,7 @@ import com.SanviiTechmet.h2dbcrud.DTOs.EmployeeResponseDTO;
 import com.SanviiTechmet.h2dbcrud.Services.CsvDataService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/emp/v2")
-@Tag(name = "Employee APIs V2",description = "Upload & Get All Employees Using C.S.V File")
+@Slf4j
+@Tag(name = "Employee Controller v2", description = "SaveAll and FindAll Operations related to Employee with CSV")
 public class EmployeeControllerV2 {
 
     @Autowired
@@ -26,18 +28,16 @@ public class EmployeeControllerV2 {
     @Autowired
     private ModelMapper mapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(EmployeeControllerV2.class);
-
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     @Operation(summary = "Upload Employee Data using C.S.V ")
     public ResponseEntity<String> uploadCSVFile(@RequestParam("csvFile") MultipartFile csvFile){
-        logger.info("CSV file received {}",csvFile.getOriginalFilename());
+        log.info("CSV file received {}",csvFile.getOriginalFilename());
         try {
             csvDataService.saveDataFromCSV(csvFile);
-            logger.info("CSV file processed successfully {}",csvFile.getOriginalFilename());
+            log.info("CSV file processed successfully {}",csvFile.getOriginalFilename());
             return ResponseEntity.ok("CSV Data Uploaded Successfully...");
         } catch (Exception e) {
-            logger.error("Error uploading CSV file: {}", e.getMessage());
+            log.error("Error uploading CSV file: {}", e.getMessage());
             return ResponseEntity.badRequest().body("Failed to process CSV file: " + e.getMessage());
         }
     }
@@ -45,7 +45,7 @@ public class EmployeeControllerV2 {
     @GetMapping("/getAll")
     @Operation(summary = "Get All Employee Data")
     public ResponseEntity<List<EmployeeResponseDTO>> getAllData(){
-        logger.info("Getting Data from DB...");
+        log.info("Getting Data from DB...");
         List<EmployeeResponseDTO> responseDTOList = csvDataService.getAllCSVData()
                 .stream()
                 .map(emp -> mapper.map(emp,EmployeeResponseDTO.class)).toList();

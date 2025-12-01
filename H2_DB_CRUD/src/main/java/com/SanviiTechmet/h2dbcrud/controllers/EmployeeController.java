@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/emp")
-@Tag(name = "Employee APIs V1", description = "Create, Read, Update & Delete Employees")
+@Tag(name = "Employee Controller v1", description = "CRUD Operations Related to Employee")
 public class EmployeeController {
 
     private final EmployeeService service;
